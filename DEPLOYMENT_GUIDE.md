@@ -67,7 +67,7 @@ NODE_ENV
 production
 
 MONGODB_URI
-mongodb+srv://playarena:PlayArena2026Secure@cluster0.xxxxx.mongodb.net/playarena?retryWrites=true&w=majority
+mongodb+srv://visheshvishesh91_db_user:18XUx3PBTf8Piu4v@cluster0.ojlrwef.mongodb.net/playarena?retryWrites=true&w=majority&appName=Cluster0
 
 JWT_SECRET
 pA8xK2nR9mF3qL7wV5yT6hJ4bN1zC0sD9uE3vX8kM2pQ7rY4tG6nB5cA1wF0hL3jZxYwVuTsRqPo
