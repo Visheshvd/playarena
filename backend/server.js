@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const dotenv = require('dotenv');
+const path = require('path');
 const connectDB = require('./config/database');
 
 // Load environment variables
@@ -43,7 +44,17 @@ app.get('/api/health', (req, res) => {
   });
 });
 
-// 404 handler
+// Serve React app for all non-API routes (SPA fallback)
+// This must come AFTER all API routes but BEFORE the 404 handler
+app.get('*', (req, res, next) => {
+  // Only serve index.html for non-API routes
+  if (req.path.startsWith('/api/')) {
+    return next();
+  }
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
+
+// 404 handler for API routes only
 app.use((req, res) => {
   res.status(404).json({
     status: 'error',
