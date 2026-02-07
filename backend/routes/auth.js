@@ -13,12 +13,12 @@ const generateToken = (userId) => {
 
 /**
  * @route   POST /api/auth/send-otp
- * @desc    Send OTP to mobile number
+ * @desc    Send OTP to mobile number (for registration)
  * @access  Public
  */
 router.post('/send-otp', async (req, res) => {
   try {
-    const { mobile } = req.body;
+    const { mobile, isLogin } = req.body;
 
     // Validate mobile number
     if (!mobile || !/^[0-9]{10}$/.test(mobile)) {
@@ -28,13 +28,32 @@ router.post('/send-otp', async (req, res) => {
       });
     }
 
+    // Check if user exists
+    let user = await User.findOne({ mobile });
+
+    // For login, user must exist
+    if (isLogin && !user) {
+      return res.status(404).json({
+        status: 'error',
+        code: 'USER_NOT_FOUND',
+        message: 'Mobile number not registered. Please register first.'
+      });
+    }
+
+    // For registration, user must not exist
+    if (!isLogin && user) {
+      return res.status(400).json({
+        status: 'error',
+        code: 'USER_EXISTS',
+        message: 'Mobile number already registered. Please login instead.'
+      });
+    }
+
     // Mock OTP (in production, integrate with SMS service)
     const otp = process.env.MOCK_OTP || '1234';
     const otpExpiry = new Date(Date.now() + 5 * 60 * 1000); // 5 minutes
 
-    // Find or create user
-    let user = await User.findOne({ mobile });
-
+    // Create user for registration
     if (!user) {
       user = new User({
         mobile,

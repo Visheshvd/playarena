@@ -31,7 +31,7 @@ api.interceptors.request.use((config) => {
 
 // Auth APIs
 export const authAPI = {
-  sendOTP: (mobile) => api.post('/auth/send-otp', { mobile }),
+  sendOTP: (mobile, isLogin = false) => api.post('/auth/send-otp', { mobile, isLogin }),
   verifyOTP: (mobile, otp, name) => api.post('/auth/verify-otp', { mobile, otp, name }),
   getProfile: () => api.get('/auth/me'),
   getStats: () => api.get('/auth/stats'),

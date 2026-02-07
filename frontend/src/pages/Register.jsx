@@ -1,11 +1,12 @@
-import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { authAPI } from '../utils/api';
 
 const Register = ({ onLogin }) => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [name, setName] = useState('');
-  const [mobile, setMobile] = useState('');
+  const [mobile, setMobile] = useState(location.state?.mobile || '');
   const [otp, setOTP] = useState('');
   const [otpSent, setOtpSent] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -22,13 +23,21 @@ const Register = ({ onLogin }) => {
     setLoading(true);
     setError('');
     try {
-      const response = await authAPI.sendOTP(mobile);
+      const response = await authAPI.sendOTP(mobile, false); // false = isRegister
       if (response.data.status === 'success') {
         setOtpSent(true);
         setSuccess('OTP sent successfully! Use: 1234');
       }
     } catch (err) {
-      setError(err.response?.data?.message || 'Failed to send OTP');
+      // Check if user already exists
+      if (err.response?.data?.code === 'USER_EXISTS') {
+        setError('Mobile number already registered. Redirecting to login...');
+        setTimeout(() => {
+          navigate('/login', { state: { mobile } });
+        }, 2000);
+      } else {
+        setError(err.response?.data?.message || 'Failed to send OTP');
+      }
     } finally {
       setLoading(false);
     }
