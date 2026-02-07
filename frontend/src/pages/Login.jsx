@@ -171,6 +171,18 @@ const Login = ({ onLogin }) => {
               </Link>
             </div>
 
+            {/* Admin Login Button */}
+            <div className="mt-4 text-center">
+              <Link 
+                to="/admin/login" 
+                className="inline-block px-4 py-2 text-sm font-medium text-purple-400 
+                         border border-purple-500/30 rounded-lg hover:bg-purple-500/10 
+                         hover:border-purple-500 transition-all duration-300"
+              >
+                🔐 Admin Login
+              </Link>
+            </div>
+
             {/* Demo Info */}
             <div className="mt-6 p-3 bg-neon-purple/10 border border-neon-purple rounded-lg text-sm text-gray-300">
               💡 <strong>Demo:</strong> Use any 10-digit number. OTP: <strong className="text-neon-purple">1234</strong>
