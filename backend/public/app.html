@@ -1,0 +1,877 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PlayArena - Neon Arcade Sports Arena</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0A0A0F;
+            color: #FFFFFF;
+            overflow-x: hidden;
+        }
+
+        /* Phone Frame */
+        .phone-frame {
+            width: 375px;
+            height: 812px;
+            margin: 20px auto;
+            background: #000;
+            border-radius: 40px;
+            padding: 12px;
+            box-shadow: 0 0 50px rgba(57, 255, 20, 0.3);
+            border: 3px solid #39FF14;
+            position: relative;
+        }
+
+        .screen {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #0A0A0F 0%, #1A1A24 100%);
+            border-radius: 32px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Status Bar */
+        .status-bar {
+            height: 40px;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+            font-size: 12px;
+        }
+
+        /* App Content */
+        .app-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+        }
+
+        /* Bottom Navigation */
+        .bottom-nav {
+            height: 70px;
+            background: #1A1A24;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            border-top: 2px solid #39FF14;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+
+        .nav-item:hover {
+            background: rgba(57, 255, 20, 0.1);
+        }
+
+        .nav-item.active {
+            color: #39FF14;
+        }
+
+        .nav-icon {
+            font-size: 24px;
+            margin-bottom: 4px;
+        }
+
+        .nav-label {
+            font-size: 10px;
+        }
+
+        /* Cards */
+        .neon-card {
+            background: #252535;
+            border: 2px solid #39FF14;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 16px;
+            box-shadow: 0 0 20px rgba(57, 255, 20, 0.2);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 0 20px rgba(57, 255, 20, 0.2); }
+            50% { box-shadow: 0 0 30px rgba(57, 255, 20, 0.4); }
+        }
+
+        .neon-card.blue {
+            border-color: #00F0FF;
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.2);
+        }
+
+        .neon-card.purple {
+            border-color: #BF40BF;
+            box-shadow: 0 0 20px rgba(191, 64, 191, 0.2);
+        }
+
+        /* Button */
+        .neon-button {
+            width: 100%;
+            padding: 16px;
+            background: #39FF14;
+            color: #0A0A0F;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .neon-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 20px rgba(57, 255, 20, 0.5);
+        }
+
+        .neon-button.blue {
+            background: #00F0FF;
+        }
+
+        .neon-button:disabled {
+            background: #707080;
+            cursor: not-allowed;
+        }
+
+        /* Input */
+        .neon-input {
+            width: 100%;
+            padding: 12px;
+            background: transparent;
+            border: 2px solid #707080;
+            border-radius: 12px;
+            color: #FFFFFF;
+            font-size: 16px;
+            margin-bottom: 16px;
+            transition: all 0.3s;
+        }
+
+        .neon-input:focus {
+            outline: none;
+            border-color: #39FF14;
+            box-shadow: 0 0 10px rgba(57, 255, 20, 0.3);
+        }
+
+        /* Title */
+        .title {
+            font-size: 28px;
+            color: #39FF14;
+            text-shadow: 0 0 20px rgba(57, 255, 20, 0.5);
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            color: #00F0FF;
+            margin-bottom: 24px;
+        }
+
+        /* Pricing */
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .pricing-card {
+            background: #1A1A24;
+            border: 2px solid #39FF14;
+            border-radius: 12px;
+            padding: 16px;
+            text-align: center;
+        }
+
+        .pricing-card.snooker {
+            border-color: #00F0FF;
+        }
+
+        .price {
+            font-size: 32px;
+            font-weight: bold;
+            color: #39FF14;
+            margin: 12px 0;
+        }
+
+        .pricing-card.snooker .price {
+            color: #00F0FF;
+        }
+
+        /* Match Card */
+        .match-card {
+            background: #1A1A24;
+            border-left: 4px solid #39FF14;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 12px;
+        }
+
+        .match-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .player-name {
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .time-badge {
+            background: #00FF88;
+            color: #0A0A0F;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .match-details {
+            color: #B0B0C0;
+            font-size: 14px;
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #39FF14;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 12px;
+            text-align: center;
+            cursor: pointer;
+            color: #B0B0C0;
+            transition: all 0.3s;
+        }
+
+        .tab.active {
+            color: #39FF14;
+            border-bottom: 2px solid #39FF14;
+            margin-bottom: -2px;
+        }
+
+        /* Slot Grid */
+        .slot-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin: 16px 0;
+        }
+
+        .slot {
+            padding: 12px;
+            border: 2px solid #707080;
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .slot.available:hover {
+            border-color: #39FF14;
+            background: rgba(57, 255, 20, 0.1);
+        }
+
+        .slot.selected {
+            border-color: #00F0FF;
+            background: rgba(0, 240, 255, 0.2);
+            color: #00F0FF;
+        }
+
+        .slot.unavailable {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #39FF14;
+        }
+
+        .error {
+            background: rgba(255, 51, 102, 0.2);
+            border: 2px solid #FF3366;
+            border-radius: 12px;
+            padding: 12px;
+            margin: 12px 0;
+            color: #FF3366;
+        }
+
+        .success {
+            background: rgba(0, 255, 136, 0.2);
+            border: 2px solid #00FF88;
+            border-radius: 12px;
+            padding: 12px;
+            margin: 12px 0;
+            color: #00FF88;
+        }
+
+        .info {
+            background: rgba(0, 240, 255, 0.1);
+            border: 1px solid #00F0FF;
+            border-radius: 8px;
+            padding: 12px;
+            margin: 12px 0;
+            color: #00F0FF;
+            font-size: 14px;
+        }
+
+        .chip {
+            display: inline-block;
+            padding: 8px 16px;
+            border: 2px solid #39FF14;
+            border-radius: 20px;
+            margin: 4px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .chip.selected {
+            background: #39FF14;
+            color: #0A0A0F;
+        }
+
+        .profile-avatar {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 20px;
+            background: rgba(191, 64, 191, 0.2);
+            border: 3px solid #BF40BF;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+        }
+
+        h3 {
+            color: #00F0FF;
+            margin: 20px 0 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="phone-frame">
+        <div class="screen">
+            <!-- Status Bar -->
+            <div class="status-bar">
+                <span>⚡ 9:41</span>
+                <span>📶 🔋</span>
+            </div>
+
+            <!-- Login Screen -->
+            <div id="loginScreen" class="app-content">
+                <div style="text-align: center; margin-top: 60px;">
+                    <h1 class="title">PlayArena</h1>
+                    <p class="subtitle">Neon Arcade Sports Arena</p>
+                </div>
+                
+                <div class="neon-card purple">
+                    <h3 style="margin-top: 0;">Login</h3>
+                    <input type="tel" class="neon-input" id="mobileInput" placeholder="Enter 10-digit mobile" maxlength="10">
+                    <button class="neon-button" onclick="sendOTP()">Send OTP</button>
+                    
+                    <div id="otpSection" class="hidden">
+                        <input type="text" class="neon-input" id="otpInput" placeholder="Enter 4-digit OTP" maxlength="4">
+                        <button class="neon-button blue" onclick="verifyOTP()">Verify & Login</button>
+                    </div>
+                    
+                    <div id="authMessage"></div>
+                </div>
+
+                <div class="info">
+                    💡 Demo: Use any 10-digit number<br>
+                    OTP: 1234
+                </div>
+            </div>
+
+            <!-- Home Screen -->
+            <div id="homeScreen" class="app-content hidden">
+                <h1 class="title">PlayArena</h1>
+                <p class="subtitle">Welcome to the Neon Arena!</p>
+                
+                <h3>Pricing</h3>
+                <div class="pricing-grid">
+                    <div class="pricing-card">
+                        <div>🎱</div>
+                        <h4>Pool Table</h4>
+                        <div class="price">₹90</div>
+                        <div>per hour</div>
+                    </div>
+                    <div class="pricing-card snooker">
+                        <div>🎯</div>
+                        <h4>Snooker Table</h4>
+                        <div class="price">₹180</div>
+                        <div>per hour</div>
+                    </div>
+                </div>
+
+                <div class="neon-card">
+                    <h4>About PlayArena</h4>
+                    <p style="color: #B0B0C0; line-height: 1.6;">
+                        Book pool and snooker tables, track your matches, and enjoy the ultimate gaming experience!
+                    </p>
+                </div>
+            </div>
+
+            <!-- Booking Screen -->
+            <div id="bookingScreen" class="app-content hidden">
+                <h1 class="title">Book a Table</h1>
+                
+                <h3>Select Game</h3>
+                <div style="margin-bottom: 20px;">
+                    <span class="chip selected" id="poolChip" onclick="selectGame('pool')">🎱 Pool</span>
+                    <span class="chip" id="snookerChip" onclick="selectGame('snooker')">🎯 Snooker</span>
+                </div>
+
+                <h3>Select Time Slot</h3>
+                <div id="slotsLoading" class="loading">Loading slots...</div>
+                <div id="slotGrid" class="slot-grid hidden"></div>
+
+                <div id="bookingDetails" class="hidden">
+                    <h3>Duration (hours)</h3>
+                    <div style="margin-bottom: 20px;">
+                        <span class="chip selected" id="dur1" onclick="selectDuration(1)">1h</span>
+                        <span class="chip" id="dur2" onclick="selectDuration(2)">2h</span>
+                        <span class="chip" id="dur3" onclick="selectDuration(3)">3h</span>
+                        <span class="chip" id="dur4" onclick="selectDuration(4)">4h</span>
+                    </div>
+
+                    <input type="text" class="neon-input" id="playerName" placeholder="Player Name (optional)">
+
+                    <div class="neon-card purple">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <strong>Total Amount</strong>
+                            <span id="totalAmount" style="font-size: 24px; color: #BF40BF;">₹90</span>
+                        </div>
+                    </div>
+
+                    <button class="neon-button" onclick="confirmBooking()">Confirm Booking</button>
+                </div>
+
+                <div id="bookingMessage"></div>
+            </div>
+
+            <!-- Matches Screen -->
+            <div id="matchesScreen" class="app-content hidden">
+                <h1 class="title">Matches</h1>
+                
+                <div class="tabs">
+                    <div class="tab active" id="ongoingTab" onclick="switchTab('ongoing')">Ongoing</div>
+                    <div class="tab" id="pastTab" onclick="switchTab('past')">Past</div>
+                </div>
+
+                <div id="ongoingMatches">
+                    <div id="ongoingLoading" class="loading">Loading matches...</div>
+                    <div id="ongoingList"></div>
+                </div>
+
+                <div id="pastMatches" class="hidden">
+                    <div id="pastLoading" class="loading">Loading matches...</div>
+                    <div id="pastList"></div>
+                </div>
+            </div>
+
+            <!-- Profile Screen -->
+            <div id="profileScreen" class="app-content hidden">
+                <h1 class="title">Profile</h1>
+                
+                <div class="profile-avatar">👤</div>
+
+                <div class="neon-card blue">
+                    <div style="color: #B0B0C0; font-size: 12px;">Name</div>
+                    <div id="profileName" style="font-size: 20px; margin: 8px 0;">User</div>
+                    
+                    <div style="color: #B0B0C0; font-size: 12px; margin-top: 16px;">Mobile</div>
+                    <div id="profileMobile" style="font-size: 18px; margin: 8px 0;">-</div>
+                </div>
+
+                <button class="neon-button" style="background: #FF3366; margin-top: 20px;" onclick="logout()">Logout</button>
+
+                <div style="text-align: center; margin-top: 40px; color: #707080; font-size: 12px;">
+                    PlayArena v1.0.0<br>
+                    Neon Arcade Sports Arena
+                </div>
+            </div>
+
+            <!-- Bottom Navigation -->
+            <div class="bottom-nav">
+                <div class="nav-item active" onclick="navigateTo('home')">
+                    <div class="nav-icon">🏠</div>
+                    <div class="nav-label">Home</div>
+                </div>
+                <div class="nav-item" onclick="navigateTo('booking')">
+                    <div class="nav-icon">📖</div>
+                    <div class="nav-label">Booking</div>
+                </div>
+                <div class="nav-item" onclick="navigateTo('matches')">
+                    <div class="nav-icon">🎱</div>
+                    <div class="nav-label">Matches</div>
+                </div>
+                <div class="nav-item" onclick="navigateTo('profile')">
+                    <div class="nav-icon">👤</div>
+                    <div class="nav-label">Profile</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:3000/api';
+        let authToken = null;
+        let currentUser = null;
+        let selectedGame = 'pool';
+        let selectedTime = null;
+        let selectedDuration = 1;
+        let availableSlots = [];
+
+        // Check if already logged in
+        const savedToken = localStorage.getItem('authToken');
+        const savedUser = localStorage.getItem('currentUser');
+        if (savedToken && savedUser) {
+            authToken = savedToken;
+            currentUser = JSON.parse(savedUser);
+            showApp();
+        }
+
+        function showMessage(elementId, message, type = 'info') {
+            const el = document.getElementById(elementId);
+            el.className = type;
+            el.textContent = message;
+            el.style.display = 'block';
+        }
+
+        async function sendOTP() {
+            const mobile = document.getElementById('mobileInput').value;
+            if (mobile.length !== 10) {
+                showMessage('authMessage', 'Please enter valid 10-digit mobile number', 'error');
+                return;
+            }
+
+            try {
+                showMessage('authMessage', 'Sending OTP...', 'info');
+                const response = await fetch(`${API_BASE}/auth/send-otp`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ mobile })
+                });
+                const data = await response.json();
+                
+                if (data.status === 'success') {
+                    showMessage('authMessage', '✅ OTP sent successfully! Enter 1234', 'success');
+                    document.getElementById('otpSection').classList.remove('hidden');
+                } else {
+                    showMessage('authMessage', data.message, 'error');
+                }
+            } catch (error) {
+                showMessage('authMessage', 'Error: ' + error.message, 'error');
+            }
+        }
+
+        async function verifyOTP() {
+            const mobile = document.getElementById('mobileInput').value;
+            const otp = document.getElementById('otpInput').value;
+            
+            if (otp.length !== 4) {
+                showMessage('authMessage', 'Please enter 4-digit OTP', 'error');
+                return;
+            }
+
+            try {
+                showMessage('authMessage', 'Verifying...', 'info');
+                const response = await fetch(`${API_BASE}/auth/verify-otp`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ mobile, otp })
+                });
+                const data = await response.json();
+                
+                if (data.status === 'success') {
+                    authToken = data.data.token;
+                    currentUser = data.data.user;
+                    localStorage.setItem('authToken', authToken);
+                    localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                    showMessage('authMessage', '✅ Login successful!', 'success');
+                    setTimeout(showApp, 1000);
+                } else {
+                    showMessage('authMessage', data.message, 'error');
+                }
+            } catch (error) {
+                showMessage('authMessage', 'Error: ' + error.message, 'error');
+            }
+        }
+
+        function showApp() {
+            document.getElementById('loginScreen').classList.add('hidden');
+            navigateTo('home');
+            updateProfile();
+        }
+
+        function navigateTo(screen) {
+            // Hide all screens
+            document.querySelectorAll('.app-content').forEach(el => el.classList.add('hidden'));
+            
+            // Show selected screen
+            document.getElementById(screen + 'Screen').classList.remove('hidden');
+            
+            // Update nav
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+
+            // Load data
+            if (screen === 'booking') {
+                loadAvailableSlots();
+            } else if (screen === 'matches') {
+                loadOngoingMatches();
+            }
+        }
+
+        function selectGame(game) {
+            selectedGame = game;
+            document.getElementById('poolChip').classList.toggle('selected', game === 'pool');
+            document.getElementById('snookerChip').classList.toggle('selected', game === 'snooker');
+            loadAvailableSlots();
+        }
+
+        function selectDuration(hours) {
+            selectedDuration = hours;
+            for (let i = 1; i <= 4; i++) {
+                document.getElementById(`dur${i}`).classList.toggle('selected', i === hours);
+            }
+            updateTotalAmount();
+        }
+
+        function updateTotalAmount() {
+            const price = selectedGame === 'pool' ? 90 : 180;
+            const total = price * selectedDuration;
+            document.getElementById('totalAmount').textContent = `₹${total}`;
+        }
+
+        async function loadAvailableSlots() {
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('slotsLoading').style.display = 'block';
+            document.getElementById('slotGrid').classList.add('hidden');
+            
+            try {
+                const response = await fetch(`${API_BASE}/booking/available-slots?gameType=${selectedGame}&date=${today}`);
+                const data = await response.json();
+                
+                if (data.status === 'success') {
+                    availableSlots = data.data.slots;
+                    renderSlots();
+                    document.getElementById('slotsLoading').style.display = 'none';
+                    document.getElementById('slotGrid').classList.remove('hidden');
+                }
+            } catch (error) {
+                console.error(error);
+                document.getElementById('slotsLoading').textContent = 'Error loading slots';
+            }
+        }
+
+        function renderSlots() {
+            const grid = document.getElementById('slotGrid');
+            grid.innerHTML = '';
+            
+            availableSlots.forEach(slot => {
+                const div = document.createElement('div');
+                div.className = `slot ${slot.available ? 'available' : 'unavailable'}`;
+                if (selectedTime === slot.time) div.classList.add('selected');
+                div.textContent = slot.time;
+                div.onclick = () => {
+                    if (slot.available) {
+                        selectedTime = slot.time;
+                        renderSlots();
+                        document.getElementById('bookingDetails').classList.remove('hidden');
+                        updateTotalAmount();
+                    }
+                };
+                grid.appendChild(div);
+            });
+        }
+
+        async function confirmBooking() {
+            if (!selectedTime) {
+                showMessage('bookingMessage', 'Please select a time slot', 'error');
+                return;
+            }
+
+            const today = new Date().toISOString().split('T')[0];
+            const playerName = document.getElementById('playerName').value || currentUser.name;
+
+            try {
+                showMessage('bookingMessage', 'Creating booking...', 'info');
+                const response = await fetch(`${API_BASE}/booking/create`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${authToken}`
+                    },
+                    body: JSON.stringify({
+                        gameType: selectedGame,
+                        bookingDate: today,
+                        startTime: selectedTime,
+                        duration: selectedDuration,
+                        playerName
+                    })
+                });
+                const data = await response.json();
+                
+                if (data.status === 'success') {
+                    showMessage('bookingMessage', '🎉 Booking confirmed successfully!', 'success');
+                    setTimeout(() => {
+                        selectedTime = null;
+                        document.getElementById('bookingDetails').classList.add('hidden');
+                        loadAvailableSlots();
+                        document.getElementById('bookingMessage').style.display = 'none';
+                    }, 2000);
+                } else {
+                    showMessage('bookingMessage', data.message, 'error');
+                }
+            } catch (error) {
+                showMessage('bookingMessage', 'Error: ' + error.message, 'error');
+            }
+        }
+
+        async function loadOngoingMatches() {
+            document.getElementById('ongoingLoading').style.display = 'block';
+            document.getElementById('ongoingList').innerHTML = '';
+            
+            try {
+                const response = await fetch(`${API_BASE}/matches/ongoing`);
+                const data = await response.json();
+                
+                document.getElementById('ongoingLoading').style.display = 'none';
+                
+                if (data.status === 'success' && data.data.matches.length > 0) {
+                    data.data.matches.forEach(match => {
+                        const card = document.createElement('div');
+                        card.className = 'match-card';
+                        card.innerHTML = `
+                            <div class="match-header">
+                                <div class="player-name">${match.playerName}</div>
+                                <div class="time-badge">${match.remainingMinutes}m left</div>
+                            </div>
+                            <div class="match-details">
+                                ${match.gameType.toUpperCase()} • ${match.duration}h • ₹${match.amountPaid}
+                            </div>
+                        `;
+                        document.getElementById('ongoingList').appendChild(card);
+                    });
+                } else {
+                    document.getElementById('ongoingList').innerHTML = '<div style="text-align: center; padding: 40px; color: #707080;">No ongoing matches</div>';
+                }
+            } catch (error) {
+                document.getElementById('ongoingLoading').textContent = 'Error loading matches';
+            }
+        }
+
+        async function loadPastMatches() {
+            document.getElementById('pastLoading').style.display = 'block';
+            document.getElementById('pastList').innerHTML = '';
+            
+            try {
+                const response = await fetch(`${API_BASE}/matches/past`, {
+                    headers: { 'Authorization': `Bearer ${authToken}` }
+                });
+                const data = await response.json();
+                
+                document.getElementById('pastLoading').style.display = 'none';
+                
+                if (data.status === 'success' && data.data.matches.length > 0) {
+                    data.data.matches.forEach(match => {
+                        const card = document.createElement('div');
+                        card.className = 'match-card';
+                        card.innerHTML = `
+                            <div class="match-header">
+                                <div class="player-name">${match.playerName}</div>
+                                <div class="time-badge" style="background: #00FF88;">COMPLETED</div>
+                            </div>
+                            <div class="match-details">
+                                ${match.gameType.toUpperCase()} • ${match.duration}h • ₹${match.amountPaid}<br>
+                                ${new Date(match.matchDate).toLocaleDateString()}
+                            </div>
+                        `;
+                        document.getElementById('pastList').appendChild(card);
+                    });
+                } else {
+                    document.getElementById('pastList').innerHTML = '<div style="text-align: center; padding: 40px; color: #707080;">No past matches</div>';
+                }
+            } catch (error) {
+                document.getElementById('pastLoading').textContent = 'Error loading matches';
+            }
+        }
+
+        function switchTab(tab) {
+            document.getElementById('ongoingTab').classList.toggle('active', tab === 'ongoing');
+            document.getElementById('pastTab').classList.toggle('active', tab === 'past');
+            document.getElementById('ongoingMatches').classList.toggle('hidden', tab !== 'ongoing');
+            document.getElementById('pastMatches').classList.toggle('hidden', tab !== 'past');
+            
+            if (tab === 'past') {
+                loadPastMatches();
+            }
+        }
+
+        function updateProfile() {
+            document.getElementById('profileName').textContent = currentUser.name;
+            document.getElementById('profileMobile').textContent = currentUser.mobile;
+        }
+
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                authToken = null;
+                currentUser = null;
+                localStorage.removeItem('authToken');
+                localStorage.removeItem('currentUser');
+                
+                // Hide all screens first
+                document.querySelectorAll('.app-content').forEach(el => el.classList.add('hidden'));
+                
+                // Show login screen and reset form
+                document.getElementById('loginScreen').classList.remove('hidden');
+                document.getElementById('mobileInput').value = '';
+                document.getElementById('otpInput').value = '';
+                document.getElementById('otpSection').classList.add('hidden');
+                document.getElementById('authMessage').style.display = 'none';
+                
+                // Reset navigation to home
+                document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+                document.querySelector('.nav-item').classList.add('active');
+            }
+        }
+
+        // Auto-refresh ongoing matches every 30 seconds
+        setInterval(() => {
+            if (!document.getElementById('matchesScreen').classList.contains('hidden') && 
+                !document.getElementById('ongoingMatches').classList.contains('hidden')) {
+                loadOngoingMatches();
+            }
+        }, 30000);
+    </script>
+</body>
+</html>
