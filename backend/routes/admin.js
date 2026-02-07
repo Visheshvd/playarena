@@ -56,14 +56,18 @@ router.post('/login', async (req, res) => {
   try {
     const { mobile, password } = req.body;
 
-    // For demo: admin mobile is 0000000000, password is admin123
-    if (mobile === '0000000000' && password === 'admin123') {
-      // Find or create admin user
-      let admin = await User.findOne({ mobile: '0000000000' });
+    // Get admin credentials from environment variables
+    const adminMobile = process.env.ADMIN_MOBILE || '0000000000';
+    const adminPassword = process.env.ADMIN_PASSWORD || 'admin123';
+
+    // Verify credentials
+    if (mobile === adminMobile && password === adminPassword) {
+      // Find or create admin user in MongoDB
+      let admin = await User.findOne({ mobile: adminMobile });
       
       if (!admin) {
         admin = new User({
-          mobile: '0000000000',
+          mobile: adminMobile,
           name: 'Admin',
           role: 'admin'
         });
@@ -270,17 +274,17 @@ router.patch('/match/:id', adminMiddleware, async (req, res) => {
         
         // Send notifications to both players about match completion
         const populatedMatch = await Match.findById(match._id)
-          .populate('player1', 'name _id')
-          .populate('player2', 'name _id');
+          .populate('user1', 'name _id')
+          .populate('user2', 'name _id');
         
-        if (populatedMatch.player1 && populatedMatch.player2) {
-          const winner = match.player1Points > match.player2Points ? populatedMatch.player1 : populatedMatch.player2;
+        if (populatedMatch.user1 && populatedMatch.user2) {
+          const winner = match.player1Points > match.player2Points ? populatedMatch.user1 : populatedMatch.user2;
           const isPlayer1Winner = match.player1Points > match.player2Points;
           
           // Notify player 1
-          sendNotificationToUser(populatedMatch.player1._id, {
+          sendNotificationToUser(populatedMatch.user1._id, {
             title: isPlayer1Winner ? '🏆 Victory!' : '💪 Match Completed',
-            body: `Your ${match.gameType} match vs ${populatedMatch.player2.name} ended ${match.player1Points}-${match.player2Points}`,
+            body: `Your ${match.gameType} match vs ${populatedMatch.user2.name} ended ${match.player1Points}-${match.player2Points}`,
             data: {
               type: 'match_completed',
               matchId: match._id.toString(),
@@ -292,9 +296,9 @@ router.patch('/match/:id', adminMiddleware, async (req, res) => {
           }).catch(err => console.error('Failed to send notification:', err));
           
           // Notify player 2
-          sendNotificationToUser(populatedMatch.player2._id, {
+          sendNotificationToUser(populatedMatch.user2._id, {
             title: !isPlayer1Winner ? '🏆 Victory!' : '💪 Match Completed',
-            body: `Your ${match.gameType} match vs ${populatedMatch.player1.name} ended ${match.player2Points}-${match.player1Points}`,
+            body: `Your ${match.gameType} match vs ${populatedMatch.user1.name} ended ${match.player2Points}-${match.player1Points}`,
             data: {
               type: 'match_completed',
               matchId: match._id.toString(),
@@ -308,7 +312,7 @@ router.patch('/match/:id', adminMiddleware, async (req, res) => {
           // Notify admins about match completion
           sendNotificationToAdmins({
             title: '🎮 Match Completed',
-            body: `${populatedMatch.player1.name} vs ${populatedMatch.player2.name} - ${match.player1Points}:${match.player2Points}`,
+            body: `${populatedMatch.user1.name} vs ${populatedMatch.user2.name} - ${match.player1Points}:${match.player2Points}`,
             data: {
               type: 'match_completed_admin',
               matchId: match._id.toString(),
